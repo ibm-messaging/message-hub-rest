@@ -37,8 +37,12 @@ module.exports.run = function(services, port, useMockService) {
     // Create a Message Hub client instance before each test. We're not
     // testing client instantiation here so a default one is fine for
     // each test.
-    beforeEach('Create a new instance of Message Hub client', function() {
+    beforeEach('Create a new instance of Message Hub client', function(done) {
       instance = new MessageHub(services, { 'https': !useMockService });
+      instance.topics.create(TOPIC_NAME)
+        .fin(function(r) {
+          done();
+        });
     });
 
     afterEach('Remove consumer instance', function() {
