@@ -118,7 +118,7 @@ module.exports.run = function(services, port, useMockService) {
         return;
       }
 
-      Expect().fail('MessageHub constructor did not throw an exception.');
+      done(new Error('MessageHub constructor did not throw an exception.'));
     });
 
     it('Throws an exception if "messagehub" key is not defined in VCAP_SERVICES', function() {
@@ -129,7 +129,7 @@ module.exports.run = function(services, port, useMockService) {
         return;
       }
 
-      Expect().fail('MessageHub constructor did not throw an exception.');
+      done(new Error('MessageHub constructor did not throw an exception.'));
     });
 
   });

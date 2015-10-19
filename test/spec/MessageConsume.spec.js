@@ -40,8 +40,11 @@ module.exports.run = function(services, port, useMockService) {
     beforeEach('Create a new instance of Message Hub client', function(done) {
       instance = new MessageHub(services, { 'https': !useMockService });
       instance.topics.create(TOPIC_NAME)
-        .fin(function(r) {
+        .then(function(response) {
           done();
+        })
+        .fail(function(error) {
+          done(new Error('Topic should have been created: ' + error));
         });
     });
 
@@ -171,7 +174,10 @@ module.exports.run = function(services, port, useMockService) {
           });
       }, 250);
 
-      instance.consume(consumerGroupName, consumerInstanceName, CONSUMER_OPTIONS)
+      instance.topics.create(TOPIC_NAME)
+        .then(function(repsonse) {
+          return instance.consume(consumerGroupName, consumerInstanceName, CONSUMER_OPTIONS);
+        })
         .then(function(response) {
           consumerInstance = response[0];
           consumerSetup = true;

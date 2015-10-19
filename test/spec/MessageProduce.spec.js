@@ -22,6 +22,8 @@
 var MessageHub = require('../../lib/messagehub');
 var Expect = require('expect.js');
 
+var TOPIC_NAME = "anothertopic";
+
 module.exports.run = function(services, port, useMockService) {
 
   describe('[Client.prototype.produce] Functionality', function() {
@@ -30,8 +32,16 @@ module.exports.run = function(services, port, useMockService) {
     // Create a Message Hub client instance before each test. We're not
     // testing client instantiation here so a default one is fine for
     // each test.
-    beforeEach('Create a new instance of Message Hub client', function() {
+    beforeEach('Create a new instance of Message Hub client', function(done) {
       instance = new MessageHub(services, { 'https': !useMockService });
+
+      instance.topics.create(TOPIC_NAME)
+        .then(function(response) {
+          done();
+        })
+        .fail(function(error) {
+          done(new Error('Topic should have been created: ' + error));
+        });
     });
 
     it('Successfully produces data with raw JavaScript object', function(done) {
@@ -39,7 +49,7 @@ module.exports.run = function(services, port, useMockService) {
         'records': [{ 'value': new Buffer('Test string').toString('base64') }]
       };
 
-      instance.produce('mytopic', message)
+      instance.produce(TOPIC_NAME, message)
         .then(function(response) {
           Expect(response).not.to.be(undefined);
           Expect(response).to.be.an('object');
@@ -60,7 +70,7 @@ module.exports.run = function(services, port, useMockService) {
       var list = new MessageHub.MessageList()
         .push('Test string');
 
-      instance.produce('mytopic', list.messages)
+      instance.produce(TOPIC_NAME, list.messages)
         .then(function(response) {
           Expect(response).not.to.be(undefined);
           Expect(response).to.be.an('object');
@@ -81,7 +91,7 @@ module.exports.run = function(services, port, useMockService) {
       var list = new MessageHub.MessageList()
         .push('朱朴');
 
-      instance.produce('mytopic', list.messages)
+      instance.produce(TOPIC_NAME, list.messages)
         .then(function(response) {
           Expect(response).not.to.be(undefined);
           Expect(response).to.be.an('object');

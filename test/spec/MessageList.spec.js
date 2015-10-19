@@ -27,7 +27,7 @@ module.exports.run = function(services, port, useMockService) {
   describe('[Client.MessageList] API', function() {
     var instance;
 
-    before(function() {
+    beforeEach(function() {
       instance = new MessageHub.MessageList();
     });
 
