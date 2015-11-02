@@ -137,7 +137,6 @@ module.exports.run = function(services, port, useMockService) {
             index++;
           }
 
-          console.log("inlist" +inList);
           if(!inList) {
             done(new Error('Topic ' + input + ' not in list after ' + timeout + ' milliseconds.'));
           }
