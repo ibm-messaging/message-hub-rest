@@ -49,14 +49,19 @@ var MockService = function(verbose) {
   */
   this.app.route('/admin/topics')
     .get(function(request, response, next) {
-      response.send(JSON.stringify(instance.topics));
+      var listResponse = [];
+      for(var index in instance.topics) {
+         var jsonString = "{\"name\":\"" +instance.topics[index] +"\",\"isMarkedForDeletion\":\"false\"}"
+         listResponse.push(JSON.parse(jsonString));
+      }
+      response.send(JSON.stringify(listResponse));
     })
     .post(function(request, response, next) {
       if(typeof(request.body.topicName) === 'string') {
         var inList = false;
 
         for(var index in instance.topics) {
-          if(instance.topics[index] === request.body.topicName) {
+          if(instance.topics[index].name === request.body.topicName) {
             inList = true;
           }
         }

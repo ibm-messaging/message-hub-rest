@@ -127,11 +127,10 @@ module.exports.run = function(services, port, useMockService) {
         .then(function(response) {
           var inList = false;
           var index = 0;
-
           // Search for the topic, if it is not in the list
           // the test fails.
           while(index < response.length && !inList) {
-            if(response[index] === input) {
+            if(response[index].name === input) {
               inList = true;
             }
 
