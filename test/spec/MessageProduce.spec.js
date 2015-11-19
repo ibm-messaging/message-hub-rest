@@ -44,6 +44,16 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
+    afterEach(function(done) {
+      instance.topics.delete(TOPIC_NAME)
+        .then(function(response) {
+          done();
+        })
+        .fail(function(error) {
+          done(new Error('Topic should have been deleted: ' + error));
+        });
+    });
+
     it('Successfully produces data with raw JavaScript object', function(done) {
       var message = {
         'records': [{ 'value': new Buffer('Test string').toString('base64') }]

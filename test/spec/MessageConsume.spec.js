@@ -48,10 +48,18 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
-    afterEach('Remove consumer instance', function() {
+    afterEach('Remove consumer instance', function(done) {
       for(var index in instance.consumerInstances) {
         instance.consumerInstances[index].remove();
       }
+
+      instance.topics.delete(TOPIC_NAME)
+        .then(function(response) {
+          done();
+        })
+        .fail(function(error) {
+          done(new Error('Topic should have been deleted: ' + error));
+        })
     });
 
     it('Successfully creates consumer group and consumer instance', function(done) {
@@ -187,12 +195,20 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
-    afterEach('Remove consumer instance', function() {
+    afterEach('Remove consumer instance', function(done) {
       clearInterval(produceInterval);
 
       for(var index in instance.consumerInstances) {
         instance.consumerInstances[index].remove();
       }
+
+      instance.topics.delete(TOPIC_NAME)
+        .then(function(response) {
+          done();
+        })
+        .fail(function(error) {
+          done(new Error('Topic should have been deleted: ' + error));
+        });
     });
 
     it('Constructs a consumer instance via instance.consume', function() {

@@ -45,7 +45,7 @@ var generateID = function(idLength) {
     }
   }
 
-  return result;
+  return '';
 };
 
 module.exports = {

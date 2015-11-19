@@ -30,6 +30,8 @@ module.exports.run = function(services, port, useMockService) {
     var TOPIC_PREFIX = TestUtils.generateID();
     var instance;
 
+    console.log(TOPIC_PREFIX);
+
     // Create a Message Hub client instance before each test. We're not
     // testing client instantiation here so a default one is fine for
     // each test.
@@ -41,9 +43,19 @@ module.exports.run = function(services, port, useMockService) {
       Expect(instance.hasOwnProperty('topics'));
     });
 
-    it('prototype.topics.create', function() {
+    it('prototype.topics.create', function(done) {
+      var topicName = TOPIC_PREFIX + 'mytopic';
+      var promise = instance.topics.create();
+
+      promise.then(function(response) {
+        return instance.topics.delete(topicName);
+      })
+      .fin(function() {
+        done();
+      });
+
       Expect(instance.topics.hasOwnProperty('create'));
-      Expect(instance.topics.create(TOPIC_PREFIX + 'mytopic').constructor.name).to.eql('Promise');
+      Expect(promise.constructor.name).to.eql('Promise');
     });
 
     it('prototype.topics.delete', function() {
@@ -79,6 +91,9 @@ module.exports.run = function(services, port, useMockService) {
 
       instance.topics.create(input)
         .then(function(data) {
+          return instance.topics.delete(input);
+        })
+        .then(function(response) {
           done();
         })
         .catch(function(error) {
@@ -194,7 +209,8 @@ module.exports.run = function(services, port, useMockService) {
     });
 
     it('Successfully retrieves a list of topics', function(done) {
-      instance.topics.create(TOPIC_PREFIX + 'topic_to_create')
+      var topicName = TOPIC_PREFIX + 'topic_to_create';
+      instance.topics.create(topicName)
         .then(function(response) {
           return Q.delay(response, 1000);
         })
@@ -205,6 +221,11 @@ module.exports.run = function(services, port, useMockService) {
           Expect(response).not.to.be(null);
           Expect(response).to.be.an(Array);
           Expect(response.length).to.be.greaterThan(0);
+        })
+        .then(function() {
+          instance.topics.delete(topicName);
+        })
+        .fin(function() {
           done();
         });
     });
