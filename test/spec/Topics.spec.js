@@ -30,8 +30,6 @@ module.exports.run = function(services, port, useMockService) {
     var TOPIC_PREFIX = TestUtils.generateID();
     var instance;
 
-    console.log(TOPIC_PREFIX);
-
     // Create a Message Hub client instance before each test. We're not
     // testing client instantiation here so a default one is fine for
     // each test.
