@@ -1,6 +1,6 @@
 {
   "name": "message-hub-rest",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Node.js module for connecting to the Kafka REST interface of IBM Message Hub.",
   "main": "lib/messagehub.js",
   "repository": {
@@ -11,7 +11,7 @@
     "node" : ">=0.12"
   },
   "scripts": {
-    "test": "mocha --bail -t 15000 ./test/run-tests.js"
+    "test": "mocha --bail -t 60000 ./test/run-tests.js"
   },
   "keywords": [
     "ibm",
