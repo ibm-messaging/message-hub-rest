@@ -52,17 +52,17 @@ var MockService = function(verbose) {
       response.send(JSON.stringify(instance.topics));
     })
     .post(function(request, response, next) {
-      if(typeof(request.body.topicName) === 'string') {
+      if(typeof(request.body.name) === 'string') {
         var inList = false;
 
         for(var index in instance.topics) {
-          if(instance.topics[index] === request.body.topicName) {
+          if(instance.topics[index] === request.body.name) {
             inList = true;
           }
         }
 
         if(!inList) {
-          instance.topics.push(request.body.topicName);
+          instance.topics.push(request.body.name);
           response.sendStatus(202);
         } else {
           response.sendStatus(422);
