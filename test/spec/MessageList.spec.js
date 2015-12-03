@@ -99,16 +99,21 @@ module.exports.run = function(services, port, useMockService) {
 
     it('Pushes valid value to records array', function() {
       var message = 'test';
-      var list = new MessageHub.MessageList().push(message);
+      var messageObject = { a: 'test' };
+      var list = new MessageHub.MessageList().push(message).push(messageObject);
       var list2 = new MessageHub.MessageList();
       list2.push(message);
+      list2.push(messageObject);
 
-      Expect(list.messages.records.length).to.eql(1);
-      Expect(list.length).to.eql(1);
+      Expect(list.messages.records.length).to.eql(2);
+      Expect(list.length).to.eql(2);
       Expect(list.messages.records[0].value).to.eql(new Buffer(message).toString('base64'));
-      Expect(list2.messages.records.length).to.eql(1);
-      Expect(list2.length).to.eql(1);
+      Expect(list.messages.records[1].value).to.eql(new Buffer(JSON.stringify(messageObject)).toString('base64'));
+
+      Expect(list2.messages.records.length).to.eql(2);
+      Expect(list2.length).to.eql(2);
       Expect(list2.messages.records[0].value).to.eql(new Buffer(message).toString('base64'));
+      Expect(list2.messages.records[1].value).to.eql(new Buffer(JSON.stringify(messageObject)).toString('base64'));
     });
 
     it('Throws exception when invalid values are pushed', function() {
@@ -136,6 +141,42 @@ module.exports.run = function(services, port, useMockService) {
       Expect(list.messages.records.length).to.eql(0);
       Expect(list2.length).to.eql(0);
       Expect(list2.messages.records.length).to.eql(0);
+    });
+
+    it('Correctly retrieves values from a list', function() {
+      var list = new MessageHub.MessageList();
+      list.push('a string');
+      list.push({ an: 'object' });
+
+      Expect(list.get(0)).to.be.a('string');
+      Expect(list.get(0)).to.eql('a string');
+
+      Expect(list.get(1)).to.be.an('object');
+      Expect(list.get(1)).to.eql({ an: 'object' });
+    });
+
+    it('Floors floating-point numbers when retrieving values', function() {
+      var list = new MessageHub.MessageList();
+      list.push('a string');
+      Expect(list.get(0.7)).to.be.a('string');
+    });
+
+    it('Throws exception when invalid values are provided', function() {
+      var list = new MessageHub.MessageList();
+      list.push('a string');
+
+      var input = [{ invalid: 0 }, null, undefined, 1, -1];
+      var expected = [TypeError, TypeError, TypeError, RangeError, RangeError];
+
+      for(var i in input) {
+        try {
+         list.get(input[i]);
+         Expect().fail('Exception should have been thrown with value: ' + input[index]);
+        } catch(e) {
+          Expect(e).not.to.be(null);
+          Expect(e).to.be.a(expected[i]);
+        }
+      }
     });
 
   });
