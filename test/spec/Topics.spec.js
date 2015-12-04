@@ -71,9 +71,6 @@ module.exports.run = function(services, port, useMockService) {
   describe('[Client.prototype.topics] Functionality', function() {
     var TOPIC_PREFIX = TestUtils.generateID();
     var instance;
-    // Used for internal tracking of topic names.
-    // (For comparison to Kafka backend).
-    var topicList = [];
 
     // Create a Message Hub client instance before each test. We're not
     // testing client instantiation here so a default one is fine for
@@ -85,8 +82,6 @@ module.exports.run = function(services, port, useMockService) {
     it('Creates a topic successfully', function(done) {
       var input = TOPIC_PREFIX + 'mytopic';
 
-      topicList.push(input);
-
       instance.topics.create(input)
         .then(function(data) {
           return instance.topics.delete(input);
@@ -95,6 +90,30 @@ module.exports.run = function(services, port, useMockService) {
           done();
         })
         .catch(function(error) {
+          done(new Error('Topic creation should have succeeded: ' + error.message));
+        });
+    });
+
+    it('Ignores 42201 error (topic exists)', function(done) {
+      var input = TOPIC_PREFIX + 'mytopic';
+
+      instance.topics.create(input)
+        .then(function(data) {
+          // Create topic again - although the REST API
+          // returns an error it should be ignored if The
+          // error_code field is equal to 42201
+          return instance.topics.create(input);
+        })
+        .catch(function(error) {
+          done(new Error('Topic creation error should have been ignored: ' + error.message));
+        })
+        .then(function(data) {
+          return instance.topics.delete(input);
+        })
+        .then(function(response) {
+          done();
+        })
+        .fail(function(error) {
           done(new Error('Topic creation should have succeeded: ' + error.message));
         });
     });

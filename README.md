@@ -157,3 +157,10 @@ Returns the current `MessageHub.MessageList` instance, which allows for chaining
 Convenience wrapper for 'messages.records.pop()', but returns the current MessageList instance to allow chaining of methods.
 
 Returns the current `MessageHub.MessageList` instance, which allows for chaining other methods.
+
+### MessageHub.MessageList.prototype.get(index)
+Retrieves a message from the message list, converting it back to its original representation (i.e. JSON string -> object)
+
+* `index` - (number) (required) The index of the list to retrieve.
+
+Returns the original representation of value stored in records array.

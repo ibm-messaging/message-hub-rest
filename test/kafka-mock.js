@@ -51,8 +51,10 @@ var MockService = function(verbose) {
     .get(function(request, response, next) {
       var listResponse = [];
       for(var index in instance.topics) {
-         var jsonString = "{\"name\":\"" +instance.topics[index] +"\",\"isMarkedForDeletion\":\"false\"}"
-         listResponse.push(JSON.parse(jsonString));
+         listResponse.push({
+           name: instance.topics[index],
+           isMarkedForDeletion: false
+         });
       }
       response.send(JSON.stringify(listResponse));
     })
@@ -61,7 +63,7 @@ var MockService = function(verbose) {
         var inList = false;
 
         for(var index in instance.topics) {
-          if(instance.topics[index].name === request.body.name) {
+          if(instance.topics[index] === request.body.name) {
             inList = true;
           }
         }
@@ -70,7 +72,7 @@ var MockService = function(verbose) {
           instance.topics.push(request.body.name);
           response.sendStatus(202);
         } else {
-          response.sendStatus(422);
+          response.status(422).send({ error_code: 42201, errorMessage: 'Topic already exists.' });
         }
       } else {
         response.sendStatus(422);
