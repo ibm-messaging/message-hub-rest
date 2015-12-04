@@ -72,7 +72,7 @@ var MockService = function(verbose) {
           instance.topics.push(request.body.name);
           response.sendStatus(202);
         } else {
-          response.status(422).send({ error_code: 42201, errorMessage: 'Topic already exists.' });
+          response.status(422).send({ errorCode: 42201, errorMessage: 'Topic already exists.' });
         }
       } else {
         response.sendStatus(422);
