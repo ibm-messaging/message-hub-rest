@@ -31,10 +31,10 @@ module.exports.run = function(services, port, useMockService) {
     // Set request options which do not change, regardless of whether
     // or not a real Kafka REST service is being used.
     requestOptions = {
-      path: '/topics/testtopic',
-      method: 'POST',
+      path: '/admin/topics',
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/vnd.kafka.binary.v1+json',
+        'Accept': 'application/json',
       },
     };
 
@@ -112,17 +112,28 @@ module.exports.run = function(services, port, useMockService) {
     });
 
     it('Rejects promise when request is POST/PUT, but the body parameter is invalid', function(done) {
-      Utils.request(requestOptions, { https: !useMockService })
-        .then(function(response) {
-          done(new Error('Request should have failed: ' + JSON.stringify(response)));
-        })
-        .fail(function(error) {
-          Expect(error).not.to.be(null);
-          Expect(error).to.be.an(Error);
-          done();
-        });
-    });
+      var methods = ['POST', 'PUT'];
+      var receivedResponses = 0;
 
+      for(var index in methods) {
+        requestOptions.method = methods[index];
+
+        Utils.request(requestOptions, { https: !useMockService })
+          .then(function(response) {
+            done(new Error('Request should have failed: ' + JSON.stringify(response)));
+          })
+          .fail(function(error) {
+            Expect(error).not.to.be(null);
+            Expect(error).to.be.an(Error);
+
+            receivedResponses++;
+
+            if(receivedResponses === methods.length) {
+              done();
+            }
+          });
+      }
+    });
   });
 
 };
