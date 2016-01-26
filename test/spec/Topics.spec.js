@@ -94,6 +94,37 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
+    it('Creates a topic successfully with more than one partition', function(done) {
+      var input = TOPIC_PREFIX + 'mytopic';
+
+      instance.topics.create(input, 2)
+        .then(function() {
+          return instance.topics.get();
+        })
+        .then(function(topics) {
+          var found = false;
+          var partitions = 0;
+
+          for(var j in topics) {
+            if(topics[j].name === input) {
+              found = true;
+              partitions = topics[j].partitions;
+            }
+          }
+
+          Expect(found).to.eql(true);
+          Expect(partitions).to.eql(2);
+
+          return instance.topics.delete(input);
+        })
+        .then(function(response) {
+          done();
+        })
+        .catch(function(error) {
+          done(new Error('Topic creation should have succeeded: ' + error.message));
+        });
+    });
+
     it('Ignores 42201 error (topic exists)', function(done) {
       var input = TOPIC_PREFIX + 'mytopic';
 
@@ -221,6 +252,47 @@ module.exports.run = function(services, port, useMockService) {
               }
             });
 
+        })();
+      }
+    });
+
+    it('Default partition count to one for invalid inputs', function(done) {
+      var input = [undefined, null, '', 'abc', -1, 0, {}, []];
+      var promisesResolved = 0;
+
+      for(var index in input) {
+        (function() {
+
+          var i = index;
+          var topicName = TOPIC_PREFIX + 'partitionTopic' + i;
+
+          instance.topics.create(topicName, input[i])
+            .then(function(data) {
+              return instance.topics.get();
+            })
+            .then(function(topics) {
+              var found = false;
+              var partitions = 0;
+
+              for(var j in topics) {
+                if(topics[j].name === topicName) {
+                  found = true;
+                  partitions = topics[j].partitions;
+                }
+              }
+
+              Expect(found).to.eql(true);
+              Expect(partitions).to.eql(1);
+
+              return instance.topics.delete(topicName);
+            })
+            .then(function() {
+              promisesResolved++;
+
+              if(promisesResolved === input.length) {
+                done();
+              }
+            });
         })();
       }
     });

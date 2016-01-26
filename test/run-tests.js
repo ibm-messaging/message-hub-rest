@@ -55,7 +55,7 @@ for(var index in argv) {
     case '--help':
       console.log('--- run-tests.js Help ---');
       console.log('Flags:');
-      console.log('--real\tRun the tests against a live service');
+      console.log('--real\tRun the tests against a live service (this action will incur a fee for partition usage)');
       console.log('--url\tThe URL of the Kafka service');
       console.log('--key\tThe API Key used to connect to the service');
       process.exit(0);

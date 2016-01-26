@@ -16,7 +16,7 @@ npm install message-hub-rest
 
 ### Run Tests
 * To run against a mock Kafka service, use ```npm test```
-* To run against a real Kafka API, use ```npm test -- --real --key ${bluemix_api_key} --url ${kafka_rest_url}```
+* __Important Note__: Running tests against a live service (with the '--real' flag) is will incur a fee and as such is not recommended.
 
 ### Example Usage:
 The following example sets up a connection to the Message Hub REST API, creates a topic, consumer and producer, then produces and consumes a few messages before exiting.
@@ -81,9 +81,11 @@ Retrieves a list of all topics connected to the provided API key.
 
 Returns a Promise object which will be fulfilled when the request to the service resolves.
 
-### MessageHub.prototype.topics.create(topic)
-Creates a topic of the specified name.
+### MessageHub.prototype.topics.create(topic, partitions)
+Creates a topic of the specified name. __Important Note__: Creating topics incurs a fee - check the Bluemix documentation
+for more information.
 * `topic` - (String) (required), the topic name for the service to create.
+* `partitions` - (String) (optional), the number of partitions to use for this topic. Defaults to 1.
 
 Returns a Promise object which will be fulfilled when the request to the service resolves.
 

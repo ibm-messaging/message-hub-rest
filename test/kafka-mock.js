@@ -49,27 +49,20 @@ var MockService = function(verbose) {
   */
   this.app.route('/admin/topics')
     .get(function(request, response, next) {
-      var listResponse = [];
-      for(var index in instance.topics) {
-         listResponse.push({
-           name: instance.topics[index],
-           isMarkedForDeletion: false
-         });
-      }
-      response.send(JSON.stringify(listResponse));
+      response.send(JSON.stringify(instance.topics));
     })
     .post(function(request, response, next) {
       if(typeof(request.body.name) === 'string') {
         var inList = false;
 
         for(var index in instance.topics) {
-          if(instance.topics[index] === request.body.name) {
+          if(instance.topics[index].name === request.body.name) {
             inList = true;
           }
         }
 
         if(!inList) {
-          instance.topics.push(request.body.name);
+          instance.topics.push({ name: request.body.name, partitions: request.body.partitions || 1 });
           response.sendStatus(202);
         } else {
           response.status(422).send({ errorCode: 42201, errorMessage: 'Topic already exists.' });
@@ -85,7 +78,7 @@ var MockService = function(verbose) {
       var index = 0;
 
       while(index < instance.topics.length && !inList) {
-        if(request.params.topicName === instance.topics[index]) {
+        if(request.params.topicName === instance.topics[index].name) {
           instance.topics.splice(index, 1);
           inList = true;
         }
