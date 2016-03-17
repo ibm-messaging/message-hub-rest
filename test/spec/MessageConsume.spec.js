@@ -304,5 +304,20 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
+    it('Can retrieve status code on error', function(done) {
+      consumerInstance.get('topic_which_does_not_exist')
+        .then(function(response) {
+          console.log(response);
+          done(new Error("ConsumerInstance.get should have failed. Response: " + response));
+        })
+        .fail(function(error) {
+          Expect(error).not.to.be(null);
+          Expect(error).to.be.an(Error);
+          Expect(error.statusCode).not.to.be(null);
+          Expect(error.statusCode).to.be.a('number');
+          done();
+        });
+    });
+
   });
 };

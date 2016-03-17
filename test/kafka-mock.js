@@ -150,6 +150,22 @@ var MockService = function(verbose) {
   */
   this.app.route('/consumers/:groupName/instances/:instanceName/topics/:topicName')
     .get(function(request, response, next) {
+      var inList = false;
+      var index = 0;
+
+      while(index < instance.topics.length && !inList) {
+        if(request.params.topicName === instance.topics[index].name) {
+          inList = true;
+        }
+
+        index++;
+      }
+
+      if(!inList) {
+        response.sendStatus(404);
+        return;
+      }
+
       var result = [];
       var topicName = request.params.topicName;
       instance.lastMessageFrom[topicName] = instance.lastMessageFrom[topicName] || [];

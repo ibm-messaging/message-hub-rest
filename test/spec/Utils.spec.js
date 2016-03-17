@@ -134,6 +134,22 @@ module.exports.run = function(services, port, useMockService) {
           });
       }
     });
+
+    it('Provides an error object with the correct keys on error', function(done) {
+      requestOptions.method = 'POST';
+
+      Utils.request(requestOptions, { https: !useMockService }, { abc: 'def' })
+        .then(function(response) {
+          done(new Error('Request should have failed: ' + JSON.stringify(response)));
+        })
+        .fail(function(error) {
+          Expect(error).not.to.be(null);
+          Expect(error).to.be.an(Error);
+          Expect(error.statusCode).not.to.be(undefined);
+          Expect(error.statusCode).to.be.a('number');
+          done();
+        });
+    });
   });
 
 };
