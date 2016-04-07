@@ -97,6 +97,66 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
+    it('Successfully produces data with string parameter', function(done) {
+      var str = 'Test string';
+
+      instance.produce(TOPIC_NAME, str)
+        .then(function(response) {
+          Expect(response).not.to.be(undefined);
+          Expect(response).to.be.an('object');
+          Expect(response.key_schema_id).to.be(null);
+          Expect(response.value_schema_id).to.be(null);
+          // Check offsets response object
+          Expect(response.offsets).not.to.be(null);
+          Expect(response.offsets).to.be.an(Array);
+          Expect(response.offsets.length).to.eql(1);
+          done();
+        })
+        .fail(function(response) {
+          done(new Error(response));
+        });
+    });
+
+    it('Successfully produces data with Array parameter', function(done) {
+      var data = ['Test string'];
+
+      instance.produce(TOPIC_NAME, data)
+        .then(function(response) {
+          Expect(response).not.to.be(undefined);
+          Expect(response).to.be.an('object');
+          Expect(response.key_schema_id).to.be(null);
+          Expect(response.value_schema_id).to.be(null);
+          // Check offsets response object
+          Expect(response.offsets).not.to.be(null);
+          Expect(response.offsets).to.be.an(Array);
+          Expect(response.offsets.length).to.eql(1);
+          done();
+        })
+        .fail(function(response) {
+          done(new Error(response));
+        });
+    });
+
+    it('Successfully produces data with Object parameter', function(done) {
+      var data = { data: ['Test string'] };
+
+      instance.produce(TOPIC_NAME, data)
+        .then(function(response) {
+          Expect(response).not.to.be(undefined);
+          Expect(response).to.be.an('object');
+          Expect(response.key_schema_id).to.be(null);
+          Expect(response.value_schema_id).to.be(null);
+          // Check offsets response object
+          Expect(response.offsets).not.to.be(null);
+          Expect(response.offsets).to.be.an(Array);
+          Expect(response.offsets.length).to.eql(1);
+          done();
+        })
+        .fail(function(response) {
+          done(new Error(response));
+        });
+    });
+
     it('Successfully produces data with MessageList object and non-Latin characters', function(done) {
       var list = new MessageHub.MessageList()
         .push('朱朴');

@@ -98,7 +98,7 @@ Returns a Promise object which will be fulfilled when the request to the service
 ### MessageHub.prototype.produce(topic, message)
 Produces a message on the specified topic.
 * `topic` - (String) (required), the topic name for the new messages to be produced on.
-* `message` - (String) (required), the message object to be pushed to the service.
+* `message` - (String|Array|MessageHub.MessageList|Object) (required), the message object to be pushed to the service.
 
 Returns a Promise object which will be fulfilled when the request to the service resolves.
 

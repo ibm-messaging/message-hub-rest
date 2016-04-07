@@ -171,7 +171,7 @@ module.exports.run = function(services, port, useMockService) {
       consumerInstanceName = CONSUMER_INSTANCE_NAME + TestUtils.generateID();
 
       produceInterval = setInterval(function() {
-        instance.produce(TOPIC_NAME, { 'records': [{ 'value': new Buffer(MESSAGE_DATA).toString('base64') }] })
+        instance.produce(TOPIC_NAME, MESSAGE_DATA)
           .then(function(r) {
             // Make sure done is only called once,
             // but allow at least one message to be published.
@@ -307,7 +307,6 @@ module.exports.run = function(services, port, useMockService) {
     it('Can retrieve status code on error', function(done) {
       consumerInstance.get('topic_which_does_not_exist')
         .then(function(response) {
-          console.log(response);
           done(new Error("ConsumerInstance.get should have failed. Response: " + response));
         })
         .fail(function(error) {

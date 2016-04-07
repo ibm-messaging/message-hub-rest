@@ -113,7 +113,7 @@ var MockService = function(verbose) {
         'key_schema_id': null,
         'value_schema_id': null,
       };
-
+      
       if(request.body.records) {
         var result = [];
 
