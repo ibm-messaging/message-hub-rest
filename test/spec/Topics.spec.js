@@ -125,6 +125,38 @@ module.exports.run = function(services, port, useMockService) {
         });
     });
 
+    it('Creates a topic successfully with more than 24 hours retention period', function(done) {
+      var input = TOPIC_PREFIX + 'mytopic';
+      var retentionHours = 35;
+
+      instance.topics.create(input, 1, retentionHours)
+        .then(function() {
+          return instance.topics.get();
+        })
+        .then(function(topics) {
+          var found = false;
+          var retentionMs = 0;
+
+          for(var j in topics) {
+            if(topics[j].name === input) {
+              found = true;
+              retentionMs = topics[j].retentionMs;
+            }
+          }
+
+          Expect(found).to.eql(true);
+          Expect(retentionMs).to.eql(retentionHours * 60 * 60 * 1000);
+
+          return instance.topics.delete(input);
+        })
+        .then(function(response) {
+          done();
+        })
+        .catch(function(error) {
+          done(new Error('Topic creation should have succeeded: ' + error.message));
+        });
+    });
+
     it('Ignores 42201 error (topic exists)', function(done) {
       var input = TOPIC_PREFIX + 'mytopic';
 
@@ -250,6 +282,9 @@ module.exports.run = function(services, port, useMockService) {
               if(promisesResolved === input.length) {
                 done();
               }
+            })
+            .catch(function(error) {
+              done(error);
             });
 
         })();
@@ -292,6 +327,53 @@ module.exports.run = function(services, port, useMockService) {
               if(promisesResolved === input.length) {
                 done();
               }
+            })
+            .catch(function(error) {
+              done(error);
+            });
+        })();
+      }
+    });
+
+    it('Default retention period to 24 hours for invalid inputs', function(done) {
+      var input = [undefined, null, '', 'abc', -1, 0, 23, {}, []];
+      var promisesResolved = 0;
+
+      for(var index in input) {
+        (function() {
+
+          var i = index;
+          var topicName = TOPIC_PREFIX + 'retentionTopic' + i;
+
+          instance.topics.create(topicName, 1, input[i])
+            .then(function(data) {
+              return instance.topics.get();
+            })
+            .then(function(topics) {
+              var found = false;
+              var retentionMs = 0;
+
+              for(var j in topics) {
+                if(topics[j].name === topicName) {
+                  found = true;
+                  retentionMs = topics[j].retentionMs;
+                }
+              }
+
+              Expect(found).to.eql(true);
+              Expect(retentionMs).to.eql(86400000);
+
+              return instance.topics.delete(topicName);
+            })
+            .then(function() {
+              promisesResolved++;
+
+              if(promisesResolved === input.length) {
+                done();
+              }
+            })
+            .catch(function(error) {
+              done(error);
             });
         })();
       }
@@ -313,6 +395,9 @@ module.exports.run = function(services, port, useMockService) {
         })
         .then(function() {
           instance.topics.delete(topicName);
+        })
+        .catch(function(error) {
+          done(error);
         })
         .fin(function() {
           done();

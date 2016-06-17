@@ -81,11 +81,12 @@ Retrieves a list of all topics connected to the provided API key.
 
 Returns a Promise object which will be fulfilled when the request to the service resolves.
 
-### MessageHub.prototype.topics.create(topic, partitions)
+### MessageHub.prototype.topics.create(topic, partitions, retentionHours)
 Creates a topic of the specified name. __Important Note__: Creating topics incurs a fee - check the Bluemix documentation
 for more information.
 * `topic` - (String) (required), the topic name for the service to create.
-* `partitions` - (String) (optional), the number of partitions to use for this topic. Defaults to 1.
+* `partitions` - (Number) (optional), the number of partitions to use for this topic. Defaults to 1.
+* `retentionHours` - (Number) (optional), the number of hours to retain messages on this topic. Minimum is 24 hours, if retentionHours is less than this, it will be set to the minimum.
 
 Returns a Promise object which will be fulfilled when the request to the service resolves.
 

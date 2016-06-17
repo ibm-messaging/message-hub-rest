@@ -62,8 +62,22 @@ var MockService = function(verbose) {
         }
 
         if(!inList) {
-          instance.topics.push({ name: request.body.name, partitions: request.body.partitions || 1 });
-          response.sendStatus(202);
+          var retentionMs = 3600000; // 24 hours
+
+          if(request.body.configs && request.body.configs.retentionMs) {
+            retentionMs = request.body.configs.retentionMs;
+          }
+          
+          if(retentionMs < 3600000 || retentionMs > 30 * 24 * 3600000) {
+            response.status(422).send({ errorCode: 42212, errorMessage: "Invalid retention period specified. The minimum is an hour and the maximum is 30 days. This must be specified as a multiple of 3,600,000" });
+          } else {
+            instance.topics.push({ 
+              name: request.body.name, 
+              partitions: request.body.partitions || 1,
+              retentionMs: retentionMs 
+            });
+            response.sendStatus(202);
+          }
         } else {
           response.status(422).send({ errorCode: 42201, errorMessage: 'Topic already exists.' });
         }
