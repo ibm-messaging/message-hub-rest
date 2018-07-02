@@ -75,7 +75,7 @@ if(useMockService) {
          "plan": "beta",
          "credentials": {
             "api_key": "an_api_key",
-            "kafka_rest_url": "http://localhost:" + PORT,
+            "kafka_admin_url": "http://localhost:" + PORT,
          }
       }
    ];
@@ -95,7 +95,7 @@ if(useMockService) {
       "label": "messagehub",
       "credentials": {
         "api_key": argApiKey,
-        "kafka_rest_url": argRestUrl,
+        "kafka_admin_url": argRestUrl,
       }
     }
   ];
