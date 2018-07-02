@@ -45,7 +45,7 @@ module.exports.run = function(services, port, useMockService) {
       requestOptions.port = port;
       requestOptions.headers['X-Auth-Token'] = 'an_api_key';
     } else {
-      var url = Url.parse(services["messagehub"][0].credentials.kafka_rest_url);
+      var url = Url.parse(services["messagehub"][0].credentials.kafka_admin_url);
       requestOptions.host = url.hostname;
       requestOptions.port = url.port;
       requestOptions.headers['X-Auth-Token'] = services["messagehub"][0].credentials.api_key;
