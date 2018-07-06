@@ -25,51 +25,10 @@ var Expect = require('expect.js');
 
 module.exports.run = function(services, port, useMockService) {
 
-  describe('[Client] API', function() {
-    var instance;
-    var message;
-
-    beforeEach(function() {
-      instance = new MessageHub(services);
-      message = {
-        'records': [{ 'value': new Buffer('Test string').toString('base64') }]
-      };
-    });
-
-    it('prototype.produce', function() {
-      Expect(instance.hasOwnProperty('produce'));
-      Expect(instance.produce('mytopic', message).constructor.name).to.eql('Promise');
-    });
-
-    it('prototype.consume', function() {
-      Expect(instance.hasOwnProperty('consume'));
-      Expect(instance.consume('test_consumer_group', 'test_consumer_instance', { })
-                          .constructor.name).to.eql('Promise');
-    });
-
-    it('Client.ConsumerInstance', function() {
-      Expect(MessageHub.ConsumerInstance).to.be.a('function');
-    });
-
-    it('Client.MessageList', function() {
-      Expect(MessageHub.MessageList).to.be.a('function');
-    });
-
-  });
-
   describe('[Client] Functionality', function() {
-
-    it('Provides relevant service functions on prototype chain', function() {
-      var instance = new MessageHub(services);
-
-      Expect(instance.produce).to.be.a('function');
-      Expect(instance.consume).to.be.a('function');
-    });
 
     it('Provides helper classes on module.exports', function() {
       Expect(MessageHub).to.be.a('function');
-      Expect(MessageHub.MessageList).to.be.a('function');
-      Expect(MessageHub.ConsumerInstance).to.be.a('function');
     });
 
     it('Loads correctly with well-formed VCAP_SERVICES input', function() {
